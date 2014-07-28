@@ -25,7 +25,7 @@ or to south:
 adb shell am broadcast -a me.piratas.gpsmock.Location --ef lat -90 --ef lon 0 --ef acc 0 --ef alt 0
 
 or to Rome:
-adb shell am broadcast -a me.piratas.gpsmock.Location --ef lat -90 41.9, 12.5
+adb shell am broadcast -a me.piratas.gpsmock.Location --ef lat -90 41.9 --ef lon 12.5
 
 float extras:
 
