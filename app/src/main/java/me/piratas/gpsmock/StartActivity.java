@@ -1,4 +1,4 @@
-package gpsmock.piratas.me.controledgpsmock;
+package me.piratas.gpsmock;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -10,13 +10,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +24,7 @@ public class StartActivity extends Activity implements LocationListener {
 
     Switch enable;
 
-    public static final String ACTION = "gpsmock.piratas.me.Location";
+    public static final String ACTION = "me.piratas.gpsmock.Location";
 
     LocationManager locationManager;
 
@@ -34,10 +32,19 @@ public class StartActivity extends Activity implements LocationListener {
         @Override
         public void onReceive(Context context, Intent intent) {
             Location location = new Location(LocationManager.GPS_PROVIDER);
-            location.setLatitude(intent.getFloatExtra("lat", 0));
-            location.setLongitude(intent.getFloatExtra("lon", 0));
+            float lat = intent.getFloatExtra("lat", 0);
+            if (lat < -90 || lat > 90)
+                lat = 0;
+
+            float lon = intent.getFloatExtra("lon", 0);
+            if (lon < -180 || lon > 180)
+                lon = 0;
+            location.setLatitude(lat);
+            location.setLongitude(lon);
             location.setAltitude(intent.getFloatExtra("alt", 0));
             location.setAccuracy(intent.getFloatExtra("acc", 0));
+            location.setSpeed(intent.getFloatExtra("spd", 0));
+            location.setBearing(intent.getFloatExtra("brn", 0));
             location.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
             location.setTime(System.currentTimeMillis());
             locationManager.setTestProviderLocation(LocationManager.GPS_PROVIDER, location);
@@ -52,6 +59,7 @@ public class StartActivity extends Activity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
         enable = (Switch) findViewById(R.id.enable);
         enable.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -64,13 +72,11 @@ public class StartActivity extends Activity implements LocationListener {
             }
         });
 
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
         listView = (ListView) findViewById(R.id.listview);
-
         listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, log));
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
     }
 
@@ -90,25 +96,6 @@ public class StartActivity extends Activity implements LocationListener {
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.start, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
@@ -116,23 +103,22 @@ public class StartActivity extends Activity implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
-//        Toast.makeText(this, location.toString(), Toast.LENGTH_LONG).show();
         log.add(0, location.toString());
-        ((ArrayAdapter<String>) this.listView.getAdapter()).notifyDataSetChanged();
+        ((BaseAdapter) this.listView.getAdapter()).notifyDataSetChanged();
     }
 
     @Override
     public void onStatusChanged(String s, int i, Bundle bundle) {
-
+        //pass
     }
 
     @Override
     public void onProviderEnabled(String s) {
-
+        //pass
     }
 
     @Override
     public void onProviderDisabled(String s) {
-
+        //pass
     }
 }

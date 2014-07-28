@@ -1,4 +1,4 @@
-package gpsmock.piratas.me.controledgpsmock;
+package me.piratas.gpsmock;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
