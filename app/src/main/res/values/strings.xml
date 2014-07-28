@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ControledGpsMock</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="example_text">Example: adb shell am broadcast -a gpsmock.piratas.me.Location --ef lat 100.1 --ef lon 102 --ef acc 0 --ef alt 0</string>
+    <string name="enable">Enable mock</string>
+
+</resources>
